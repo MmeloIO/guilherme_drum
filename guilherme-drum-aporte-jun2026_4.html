@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Aporte — Guilherme Drum</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1E2761;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: rgba(201,168,76,0.15);
+    --bg: #0A0C1A;
+    --bg2: #0F1225;
+    --bg3: #161A35;
+    --bg4: #1C2040;
+    --text: #E8E6DF;
+    --text-dim: #9B99A0;
+    --text-dimmer: #5C5A63;
+    --white: #FFFFFF;
+
+    /* ARCA colors */
+    --arca-a1: #2DD4BF;   /* Ações */
+    --arca-r:  #8B5CF6;   /* Real Estate */
+    --arca-c:  #C9A84C;   /* Caixa */
+    --arca-a2: #F472B6;   /* Alternativos */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── PASSWORD OVERLAY ── */
+  #overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap: 28px;
+  }
+  #overlay .lock-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+  #overlay p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  #overlay input {
+    background: var(--bg3);
+    border: 1px solid var(--bg4);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    padding: 14px 24px;
+    width: 280px;
+    text-align: center;
+    outline: none;
+    transition: border-color .2s;
+  }
+  #overlay input:focus { border-color: var(--gold); }
+  #overlay button {
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--bg);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 14px 40px;
+    width: 280px;
+    transition: opacity .2s;
+  }
+  #overlay button:hover { opacity: 0.85; }
+  #overlay .err {
+    color: #E85C4A;
+    font-size: 0.8rem;
+    height: 16px;
+  }
+
+  #content { display: none; }
+
+  .fade-up { animation: fadeUp 0.6s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 90px 0 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--bg4);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(30,39,97,0.5) 0%, transparent 65%);
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    color: var(--white);
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+  }
+  .hero-meta {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 36px;
+  }
+  .hero-amount {
+    display: inline-block;
+    background: var(--bg2);
+    border: 1px solid var(--gold-dim);
+    border-radius: 16px;
+    padding: 24px 48px;
+  }
+  .hero-amount-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .hero-amount-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 2.4rem;
+    color: var(--gold-light);
+    font-weight: 500;
+  }
+
+  /* ── SECTION ── */
+  .section { padding: 64px 0; border-bottom: 1px solid var(--bg4); }
+  .section:last-of-type { border-bottom: none; }
+  .section-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+  .section-intro {
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 36px;
+    font-size: 0.95rem;
+  }
+
+  /* ── DONUT / SUMMARY ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .summary-card {
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .summary-card .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+  }
+  .summary-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .summary-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    color: var(--white);
+  }
+
+  /* ── ATIVO CARDS ── */
+  .ativo-card {
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-left: 3px solid var(--gold);
+    border-radius: 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.25s ease;
+  }
+  .ativo-card:hover { border-color: var(--gold-dim); border-left-color: var(--gold-light); }
+  .ativo-card.acoes { border-left-color: var(--arca-a1); }
+  .ativo-card.fiis { border-left-color: var(--arca-r); }
+  .ativo-card.caixa { border-left-color: var(--arca-c); }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 26px;
+  }
+  .card-id {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .card-letter {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+  .ativo-card.acoes .card-letter { background: linear-gradient(135deg, var(--arca-a1), #5EEAD4); }
+  .ativo-card.fiis .card-letter { background: linear-gradient(135deg, var(--arca-r), #A78BFA); }
+  .ativo-card.caixa .card-letter { background: linear-gradient(135deg, var(--arca-c), var(--gold-light)); }
+
+  .card-ticker { font-family: 'DM Mono', monospace; font-size: 1.05rem; color: var(--white); font-weight: 500; }
+  .card-name { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  .card-value-block { text-align: right; }
+  .card-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--gold-light);
+  }
+  .card-chevron {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--bg4);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold);
+    font-size: 0.85rem;
+    margin-left: 14px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .ativo-card.expanded .card-chevron { transform: rotate(180deg); border-color: var(--gold); }
+
+  .card-meta-row {
+    display: flex;
+    gap: 28px;
+    padding: 0 26px 22px;
+    flex-wrap: wrap;
+  }
+  .meta-item { }
+  .meta-label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dimmer); margin-bottom: 4px; }
+  .meta-val { font-family: 'DM Mono', monospace; font-size: 0.92rem; color: var(--text); }
+
+  .card-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    border-top: 1px solid var(--bg4);
+  }
+  .ativo-card.expanded .card-expand { max-height: 600px; }
+  .card-expand-inner { padding: 24px 26px 28px; }
+
+  .segment-tag {
+    display: inline-block;
+    background: var(--gold-dim);
+    color: var(--gold-light);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .card-expand-inner h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .card-expand-inner p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+  }
+  .expand-highlight {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold-dim);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .expand-highlight strong { color: var(--gold-light); }
+
+  /* ── TABLE ── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .summary-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    padding: 16px 22px;
+    background: var(--bg3);
+    font-weight: 500;
+  }
+  .summary-table td {
+    padding: 16px 22px;
+    border-top: 1px solid var(--bg4);
+    font-size: 0.92rem;
+  }
+  .summary-table .t-name { color: var(--white); font-weight: 500; }
+  .summary-table .t-tag { font-size: 0.72rem; color: var(--text-dim); }
+  .summary-table .t-value { font-family: 'DM Mono', monospace; color: var(--gold-light); text-align: right; }
+  .summary-table tfoot td { border-top: 2px solid var(--gold-dim); font-weight: 600; color: var(--white); }
+  .summary-table tfoot .t-value { font-size: 1.05rem; color: var(--gold-light); }
+
+  /* ── STEPS ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 18px;
+    padding: 20px 0;
+    border-top: 1px solid var(--bg4);
+  }
+  .step:first-child { border-top: none; }
+  .step-num {
+    counter-increment: step;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    color: var(--gold-light);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .step-num::before { content: counter(step); }
+  .step-text { font-size: 0.92rem; color: var(--text); padding-top: 4px; }
+  .step-text strong { color: var(--white); }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 56px 24px 64px;
+  }
+  .footer-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .footer-role { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 2px; }
+  .footer-brand { font-size: 0.78rem; color: var(--gold-light); margin-bottom: 14px; }
+  .footer-contact { font-size: 0.78rem; color: var(--text-dimmer); }
+
+  @media (max-width: 640px) {
+    .summary-grid { grid-template-columns: 1fr; }
+    .card-head { flex-wrap: wrap; gap: 12px; }
+    .card-meta-row { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <div class="lock-logo">Guilherme Drum</div>
+  <p>PLANO DE APORTE · JUNHO 2026</p>
+  <input type="password" id="pwd" placeholder="Senha de acesso" onkeypress="if(event.key==='Enter') checkPwd()">
+  <button onclick="checkPwd()">Acessar</button>
+  <div class="err" id="err"></div>
+</div>
+
+<div id="content">
+
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div class="wrap">
+      <div class="hero-eyebrow">Plano de Aporte · ARCA</div>
+      <h1>Guilherme Drum</h1>
+      <div class="hero-meta">Junho 2026 · Elaborado por Matheus Melo, CFP®</div>
+      <div class="hero-amount">
+        <div class="hero-amount-label">Valor do Aporte</div>
+        <div class="hero-amount-value">R$ 3.269,00</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUMO -->
+  <section class="section fade-up">
+    <div class="wrap">
+      <div class="section-eyebrow">Resumo</div>
+      <h2 class="section-title">Para onde vai o seu aporte</h2>
+      <p class="section-intro">
+        Seu aporte deste mês foi dividido em três frentes, seguindo a metodologia ARCA:
+        fortalecimento da reserva de emergência e diversificação em 13 novas posições entre Ações e Real Estate.
+      </p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:var(--arca-c);"></span>Reserva</div>
+          <div class="summary-value">R$ 1.329,00</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:var(--arca-a1);"></span>Ações · 7 ativos</div>
+          <div class="summary-value">R$ 970,00</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:var(--arca-r);"></span>Real Estate · 6 ativos</div>
+          <div class="summary-value">R$ 970,00</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATIVOS -->
+  <section class="section fade-up">
+    <div class="wrap">
+      <div class="section-eyebrow">Compras</div>
+      <h2 class="section-title">O que você vai comprar</h2>
+      <p class="section-intro">
+        Toque em cada item para ver os detalhes do ativo, o motivo da escolha e o que esperar dele na sua carteira.
+      </p>
+
+      <!-- RESERVA -->
+      <div class="ativo-card caixa" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">C</div>
+            <div>
+              <div class="card-ticker">Reserva de Emergência</div>
+              <div class="card-name">Liquidez diária · CDB / Tesouro Reserva</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 1.329,00</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Onde</div><div class="meta-val">Daycoval / BMG / BB</div></div>
+          <div class="meta-item"><div class="meta-label">Liquidez</div><div class="meta-val">Diária</div></div>
+          <div class="meta-item"><div class="meta-label">Tipo</div><div class="meta-val">Renda Fixa Pós</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Caixa · Liquidez Imediata</span>
+          <h5>Por que reforçar a reserva agora?</h5>
+          <p>Sua reserva de emergência é a base de todo o planejamento — ela garante que imprevistos não te obriguem a vender investimentos no momento errado. Direcionamos R$ 1.329,00 deste aporte para elevar sua reserva, aproximando você da meta de R$ 20.000,00 com total liquidez diária.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Rendimento próximo ao CDI, sem oscilação de preço e com resgate imediato sempre que precisar.</div>
+        </div></div>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">PRIO3</div>
+              <div class="card-name">Prio</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 226,33</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 69,24</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">3.27</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">0.00%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Petróleo e Gás</span>
+          <h5>O que é a Prio?</h5>
+          <p>A Prio é uma das maiores produtoras independentes de petróleo do Brasil, focada na revitalização de campos maduros adquiridos da Petrobras.</p>
+          <p>Por que está na sua carteira: maior peso entre as ações da sua estratégia, com forte geração de caixa operacional, mesmo sem distribuição de dividendos no momento.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Empresa de crescimento e reinvestimento — o retorno tende a vir via valorização da ação, não por proventos.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">GMAT3</div>
+              <div class="card-name">Grupo Mateus</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 161,67</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 6,92</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">23.36</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">6.01%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Varejo e Atacarejo</span>
+          <h5>O que é o Grupo Mateus?</h5>
+          <p>O Grupo Mateus é uma das maiores redes de varejo e atacarejo do Norte e Nordeste do Brasil, com forte presença regional.</p>
+          <p>Por que está na sua carteira: exposição ao consumo regional brasileiro, com Dividend Yield de 6,01% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Crescimento ligado à expansão de lojas e ao consumo regional, com distribuição moderada de dividendos.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">WIZC3</div>
+              <div class="card-name">Wiz Co.</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 129,33</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 10,50</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">12.32</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">6.72%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Corretora de Seguros</span>
+          <h5>O que é a Wiz Co.?</h5>
+          <p>A Wiz Co. atua na distribuição de seguros e produtos financeiros, com parcerias estratégicas no setor bancário e de varejo.</p>
+          <p>Por que está na sua carteira: diversificação setorial em serviços financeiros, com Dividend Yield de 6,72% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Receita recorrente ligada a comissões de seguros, com histórico de distribuição de proventos.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">SLCE3</div>
+              <div class="card-name">SLC Agrícola</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 129,33</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 23,28</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">5.56</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">7.97%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Agronegócio</span>
+          <h5>O que é a SLC Agrícola?</h5>
+          <p>A SLC Agrícola é uma das maiores produtoras de grãos e algodão do Brasil, com operação verticalizada em larga escala.</p>
+          <p>Por que está na sua carteira: exposição ao agronegócio brasileiro, com Dividend Yield de 7,97% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Resultados ligados ao ciclo agrícola e preços de commodities, com distribuição de dividendos variável ano a ano.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">VAMO3</div>
+              <div class="card-name">Vamos</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 129,33</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 5,54</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">23.35</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">4.41%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Locação de Veículos e Equipamentos</span>
+          <h5>O que é a Vamos?</h5>
+          <p>A Vamos é uma das maiores empresas de locação de caminhões, máquinas e equipamentos pesados do Brasil.</p>
+          <p>Por que está na sua carteira: exposição ao setor de logística e transporte, com Dividend Yield de 4,41% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Crescimento atrelado à expansão da frota locada, com sensibilidade a juros por conta do endividamento típico do setor.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">KEPL3</div>
+              <div class="card-name">Kepler Weber</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 129,33</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 9,55</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">13.54</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">10.77%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Armazenagem Agrícola</span>
+          <h5>O que é a Kepler Weber?</h5>
+          <p>A Kepler Weber é líder em soluções de armazenagem de grãos no Brasil, fabricando silos e equipamentos para o agronegócio.</p>
+          <p>Por que está na sua carteira: maior Dividend Yield do bloco de Ações, em 10,77% nos últimos 12 meses, com exposição ao agronegócio.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Boa geradora de caixa, com distribuição de dividendos consistente e ciclo ligado à demanda por armazenagem agrícola.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card acoes" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">A</div>
+            <div>
+              <div class="card-ticker">BRBI11</div>
+              <div class="card-name">BR Partners</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 64,67</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 17,87</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">3.62</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">9.47%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">Ações · Banco de Investimento</span>
+          <h5>O que é a BR Partners?</h5>
+          <p>Banco de investimento independente, focado em assessoria financeira, M&A e mercado de capitais para médias e grandes empresas.</p>
+          <p>Por que está na sua carteira: menor peso do bloco, complementando a diversificação em serviços financeiros, com Dividend Yield de 9,47% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Receita ligada a operações de mercado de capitais, com boa distribuição de proventos.</div>
+        </div></div>
+      </div>
+
+      <!-- REAL ESTATE / FIIS -->
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">CPTS11</div>
+              <div class="card-name">Capitânia Securities II</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 291,00</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 8,90</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">32.70</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">13.26%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Papel · Recebíveis Imobiliários</span>
+          <h5>O que é o Capitânia Securities II?</h5>
+          <p>Fundo de papel administrado pela Capitânia, com carteira diversificada de CRIs (Certificados de Recebíveis Imobiliários).</p>
+          <p>Por que está na sua carteira: maior peso entre os FIIs da sua estratégia, com o maior Dividend Yield do bloco, em 13,26% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Pagamento mensal de proventos isentos de Imposto de Renda para pessoa física, com rentabilidade atrelada a CDI e inflação.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">XPML11</div>
+              <div class="card-name">XP Malls</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 194,00</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 115,00</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">1.69</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">10.18%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Tijolo · Shopping Centers</span>
+          <h5>O que é o XP Malls?</h5>
+          <p>Fundo imobiliário de tijolo com participação em shopping centers de alto padrão geridos pela XP Asset.</p>
+          <p>Por que está na sua carteira: exposição ao varejo físico premium, com Dividend Yield de 10,18% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Renda ligada ao desempenho dos shoppings, com potencial de valorização patrimonial no longo prazo.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">VILG11</div>
+              <div class="card-name">Vinci Logística</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 161,67</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 111,00</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">1.46</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">8.72%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Tijolo · Galpões Logísticos</span>
+          <h5>O que é o Vinci Logística?</h5>
+          <p>Fundo imobiliário com portfólio de galpões logísticos e industriais, locados para grandes operadores e e-commerce.</p>
+          <p>Por que está na sua carteira: exposição ao setor logístico, com Dividend Yield de 8,72% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Renda recorrente via contratos de locação de longo prazo, com bons fundamentos de ocupação.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">PVBI11</div>
+              <div class="card-name">VBI Prime Properties</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 161,67</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 110,00</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">1.47</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">7.11%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Tijolo · Lajes Corporativas</span>
+          <h5>O que é o VBI Prime Properties?</h5>
+          <p>Fundo imobiliário focado em lajes corporativas de alto padrão (Triple A), localizadas nas principais regiões de negócios.</p>
+          <p>Por que está na sua carteira: exposição ao mercado de escritórios premium, com Dividend Yield de 7,11% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Renda ligada à ocupação e reajuste de aluguéis comerciais de alto padrão.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">XPCI11</div>
+              <div class="card-name">XP Crédito Imobiliário</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 97,00</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 95,00</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">1.02</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">13.12%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Papel · Crédito Imobiliário</span>
+          <h5>O que é o XP Crédito Imobiliário?</h5>
+          <p>Fundo de papel da XP com carteira de CRIs diversificada por indexador, setor e devedor.</p>
+          <p>Por que está na sua carteira: Dividend Yield elevado, em 13,12% nos últimos 12 meses, complementando a exposição a recebíveis.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Pagamento mensal isento de IR para pessoa física, com sensibilidade a CDI e IPCA.</div>
+        </div></div>
+      </div>
+      <div class="ativo-card fiis" onclick="toggleCard(this)">
+        <div class="card-head">
+          <div class="card-id">
+            <div class="card-letter">R</div>
+            <div>
+              <div class="card-ticker">PSEC11</div>
+              <div class="card-name">Pátria Securities</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <div class="card-value-block">
+              <div class="card-value">R$ 64,67</div>
+            </div>
+            <div class="card-chevron">▾</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <div class="meta-item"><div class="meta-label">Preço Máx.</div><div class="meta-val">R$ 81,00</div></div>
+          <div class="meta-item"><div class="meta-label">Cotas</div><div class="meta-val">0.80</div></div>
+          <div class="meta-item"><div class="meta-label">DY 12m</div><div class="meta-val">13.23%</div></div>
+        </div>
+        <div class="card-expand"><div class="card-expand-inner">
+          <span class="segment-tag">FII de Papel · Recebíveis Imobiliários</span>
+          <h5>O que é o Pátria Securities?</h5>
+          <p>Fundo imobiliário de papel (CRI), administrado pela Pátria, com carteira de recebíveis imobiliários de alta qualidade de crédito.</p>
+          <p>Por que está na sua carteira: menor peso do bloco, complementando a diversificação em recebíveis, com Dividend Yield de 13,23% nos últimos 12 meses.</p>
+          <div class="expand-highlight"><strong>O que esperar:</strong> Pagamento mensal de proventos isentos de Imposto de Renda para pessoa física.</div>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TABELA RESUMO -->
+  <section class="section fade-up">
+    <div class="wrap">
+      <div class="section-eyebrow">Consolidado</div>
+      <h2 class="section-title">Resumo do aporte</h2>
+
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Destino</th>
+            <th>Classe ARCA</th>
+            <th style="text-align:right;">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="t-name">Reserva de Emergência</td>
+            <td class="t-tag">C · Caixa</td>
+            <td class="t-value">R$ 1.329,00</td>
+          </tr>
+          <tr>
+            <td class="t-name">PRIO3 — Prio</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 226,33</td>
+          </tr>
+          <tr>
+            <td class="t-name">GMAT3 — Grupo Mateus</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 161,67</td>
+          </tr>
+          <tr>
+            <td class="t-name">WIZC3 — Wiz Co.</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 129,33</td>
+          </tr>
+          <tr>
+            <td class="t-name">SLCE3 — SLC Agrícola</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 129,33</td>
+          </tr>
+          <tr>
+            <td class="t-name">VAMO3 — Vamos</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 129,33</td>
+          </tr>
+          <tr>
+            <td class="t-name">KEPL3 — Kepler Weber</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 129,33</td>
+          </tr>
+          <tr>
+            <td class="t-name">BRBI11 — BR Partners</td>
+            <td class="t-tag">A · Ações</td>
+            <td class="t-value">R$ 64,67</td>
+          </tr>
+          <tr>
+            <td class="t-name">CPTS11 — Capitânia Securities II</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 291,00</td>
+          </tr>
+          <tr>
+            <td class="t-name">XPML11 — XP Malls</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 194,00</td>
+          </tr>
+          <tr>
+            <td class="t-name">VILG11 — Vinci Logística</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 161,67</td>
+          </tr>
+          <tr>
+            <td class="t-name">PVBI11 — VBI Prime Properties</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 161,67</td>
+          </tr>
+          <tr>
+            <td class="t-name">XPCI11 — XP Crédito Imobiliário</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 97,00</td>
+          </tr>
+          <tr>
+            <td class="t-name">PSEC11 — Pátria Securities</td>
+            <td class="t-tag">R · Real Estate</td>
+            <td class="t-value">R$ 64,67</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Total do aporte</td>
+            <td class="t-value">R$ 3.269,00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS PASSOS -->
+  <section class="section fade-up">
+    <div class="wrap">
+      <div class="section-eyebrow">Execução</div>
+      <h2 class="section-title">Próximos passos</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-text">Transfira <strong>R$ 1.329,00</strong> para sua reserva de emergência (Daycoval, BMG ou Tesouro Reserva).</div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-text">Em <strong>Ações</strong>, compre: PRIO3 (R$ 226,33 · até R$ 69,24/cota), GMAT3 (R$ 161,67 · até R$ 6,92/cota), WIZC3 (R$ 129,33 · até R$ 10,50/cota), SLCE3 (R$ 129,33 · até R$ 23,28/cota), VAMO3 (R$ 129,33 · até R$ 5,54/cota), KEPL3 (R$ 129,33 · até R$ 9,55/cota) e BRBI11 (R$ 64,67 · até R$ 17,87/cota) — total R$ 970,00.</div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-text">Em <strong>Real Estate</strong>, compre: CPTS11 (R$ 291,00 · até R$ 8,90/cota), XPML11 (R$ 194,00 · até R$ 115,00/cota), VILG11 (R$ 161,67 · até R$ 111,00/cota), PVBI11 (R$ 161,67 · até R$ 110,00/cota), XPCI11 (R$ 97,00 · até R$ 95,00/cota) e PSEC11 (R$ 64,67 · até R$ 81,00/cota) — total R$ 970,00.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-mark">Matheus Melo</div>
+    <div class="footer-role">Planejador Financeiro Pessoal · CFP®</div>
+    <div class="footer-brand">Grão | Grupo Primo</div>
+    <div class="footer-contact">(99) 99175-6837</div>
+  </footer>
+
+</div>
+
+<script>
+  function checkPwd() {
+    const val = document.getElementById('pwd').value;
+    if (val === 'guilherme2026') {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    } else {
+      document.getElementById('err').textContent = 'Senha incorreta. Tente novamente.';
+      document.getElementById('pwd').value = '';
+    }
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('expanded');
+  }
+</script>
+</body>
+</html>
